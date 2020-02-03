@@ -5,6 +5,7 @@ prediction models of 2019-nCoV patients
 
 2.数据建模：
 对每日新增加的新冠状病毒确诊患者数量进行了建模，建立了如下三个预测模型：
+
 （1） 线性模型
 请参考图片 linear.png
 
@@ -18,6 +19,8 @@ prediction models of 2019-nCoV patients
 模型的构建工具为Excel。
 
 3. 预测结果:
-2月3日新增病例区间为2945 ~ 3228
+
+2月3日新增病例区间为2945 ~ 3228人。
+
 到目前为止，疫情的拐点仍未到来。
 

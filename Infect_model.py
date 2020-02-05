@@ -8,6 +8,7 @@ https://zhuanlan.zhihu.com/p/104268573?night=1
 """
 
 import pylab as pl
+import random
 
 # N 人口总数
 # I 感染者
@@ -196,7 +197,10 @@ def SEIR_wuhan_model(N= 10000, I= 1, r= 20, B= 0.03, r2= 20, B2= 0.03, y= 0.1, a
 # y 康复概率
 # a 潜伏者转化为感染者概率
 #导入潜伏期人群（潜伏期具有传染性）
-def SEIR_wuhan_blocked_model(N= 10000, I= 1, r= 20, B= 0.03, r2= 20, B2= 0.03, y= 0.1, a= 0.1, bolckday= 10):
+def SEIR_wuhan_blocked_model(N=10000, I= 1, r= 20, 
+                             B= 0.03, r2= 20, 
+                             B2= 0.03, y= 0.85, 
+                             a= 0.1, bolckday= 25):
 
     #易感者
     S= N - I
@@ -231,6 +235,7 @@ def SEIR_wuhan_blocked_model(N= 10000, I= 1, r= 20, B= 0.03, r2= 20, B2= 0.03, y
         Infectors.append(Infectors[idx] + a*Exposed[idx] - y*Infectors[idx])
         Recovers.append(Recovers[idx] + y*Infectors[idx])
     
+    pl.figure(figsize=(12,6))
     pl.plot(Suspectors,  label= u"Susceptibles")
     pl.plot(Exposed, label= u"Exposed")    
     pl.plot(Infectors, label= u"Infectors")
@@ -238,6 +243,74 @@ def SEIR_wuhan_blocked_model(N= 10000, I= 1, r= 20, B= 0.03, r2= 20, B2= 0.03, y
 
     pl.legend()
     pl.show()
+    
+    #print(Infectors)
+    return max(Infectors), Infectors.index(max(Infectors))
+
+# N 人口总数
+# I 感染者
+# r 感染者接触易感者的人数
+# B 传染概率
+# y 康复概率
+# a 潜伏者转化为感染者概率
+# d 感染者死亡率
+# p 人口流入率    
+# blockday 隔离介入的时间    
+#导入潜伏期人群（潜伏期具有传染性）
+def SEIR_wuhan_modified_model(N=10000, I= 1, 
+                              r= 20, B= 0.03, 
+                              r2= 20, B2= 0.03, 
+                              y= 0.85, a= 0.1, 
+                              d= 0.035, population= 10,
+                              bolckday= 20):
+
+    #易感者
+    S= N - I
+    
+    #复原者
+    R= 0
+    
+    #潜伏者
+    E= 0
+    
+    T = 200
+    
+    Infectors= []
+    Infectors.append(I)
+    
+    Suspectors= [] 
+    Suspectors.append(S)
+    
+    Recovers= []
+    Recovers.append(R)
+    
+    Exposed= []
+    Exposed.append(E)
+    
+    for idx in range(T):
+        if idx> bolckday:
+            r= 5
+            r2= 5
+        
+        p = 1.0 + random.randint(-1*population, population)/10000.0
+        #print(p)
+        N = N*p
+                
+        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N - r2*B2*Suspectors[idx]*Exposed[idx]/N)
+        Exposed.append(Exposed[idx] + r*B*Suspectors[idx]*Infectors[idx]/N - a*Exposed[idx] + r2*B2*Suspectors[idx]*Exposed[idx]/N)
+        Infectors.append(Infectors[idx] + a*Exposed[idx] - y*Infectors[idx] - d*Infectors[idx])
+        Recovers.append(Recovers[idx] + y*Infectors[idx])
+    
+    pl.figure(figsize=(12,6))
+    pl.plot(Suspectors,  label= u"Susceptibles")
+    pl.plot(Exposed, label= u"Exposed")    
+    pl.plot(Infectors, label= u"Infectors")
+    pl.plot(Recovers, label= u"Recovers")
+
+    pl.legend()
+    pl.show()
+    
+    #print(Infectors)
     return max(Infectors), Infectors.index(max(Infectors))
 
 if __name__ == '__main__':
@@ -245,7 +318,21 @@ if __name__ == '__main__':
     #SIS_model()
     #SIR_model()
     #SEIR_model()
-    #SEIR_wuhan_model()
+    #SEIR_wuhan_blocked_model()
+    print(SEIR_wuhan_modified_model())
     
+    '''
+    value = []
+    pos= []
     for i in range(30):
-        print(i, SEIR_wuhan_blocked_model(bolckday= i))
+        maxValue, maxPos = SEIR_wuhan_blocked_model(bolckday= i)
+        value.append(maxValue)
+        pos.append(maxPos)
+    
+    pl.figure(figsize=(12,6))
+    #pl.plot(pos,'-og', label= u"Peak Position")
+    pl.plot(value, '-xr', label= u"Peak Value")    
+
+    pl.legend()
+    pl.show() 
+    '''

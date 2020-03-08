@@ -10,396 +10,497 @@ https://zhuanlan.zhihu.com/p/104268573?night=1
 import matplotlib.pyplot as plt
 import random
 
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-def SI_model(N= 10000, I= 1, r= 10, B= 0.01):
-
-    #易感者
-    S= N - I
-    T = 200
+class infection_model():
+    def __init__(self, 
+                 population= 10000,
+                 infectors_num= 1,
+                 contactors_num= 10,
+                 infect_prob= 0.05):
+        
+        super(infection_model, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.contactors_num = contactors_num
+        self.interval = 0
+        
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
     
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    for idx in range(T):
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N)
-        Infectors.append(Infectors[idx] + r*B*Infectors[idx]*Suspectors[idx]/N)
-    
-    plt.cla()
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Infectors, label= u"Infectors")
-    plt.pause(0.1)
-    plt.legend()
-
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-# y 康复概率
-# 康复者将有可能再次感染
-def SIS_model(N= 10000, I= 1, r= 10, B= 0.01, y= 0.02):
-
-    #易感者
-    S= N - I
-    T = 200
-    
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    for idx in range(T):
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N + y*Infectors[idx])
-        Infectors.append(Infectors[idx] + r*B*Infectors[idx]*Suspectors[idx]/N - y*Infectors[idx])
-    
-    plt.cla()
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Infectors, label= u"Infectors")
-    plt.pause(0.1)
-    plt.legend()
-
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-# y 康复概率
-# 康复者将具有抗体不再感染    
-def SIR_model(N= 10000, I= 1, r= 10, B= 0.05, y= 0.1):
-
-    #易感者
-    S= N - I
-    
-    #复原者
-    R= 0
-    
-    T = 200
-    
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    Recovers= []
-    Recovers.append(R)
-    
-    for idx in range(T):
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N)
-        Infectors.append(Infectors[idx] + r*B*Infectors[idx]*Suspectors[idx]/N - y*Infectors[idx])
-        Recovers.append(Recovers[idx] + y*Infectors[idx])
-    
-    plt.cla()
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Infectors, label= u"Infectors")
-    plt.plot(Recovers, label= u"Recovers")
-    
-    plt.pause(0.1)
-    plt.legend()
-
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-# y 康复概率
-# a 潜伏者转化为感染者概率
-#导入潜伏期人群(潜伏期不具有传染性)
-def SEIR_model(N= 10000, I= 1, r= 20, B= 0.03, y= 0.1, a= 0.1):
-
-    #易感者
-    S= N - I
-    
-    #复原者
-    R= 0
-    
-    #潜伏者
-    E= 0
-    
-    T = 200
-    
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    Recovers= []
-    Recovers.append(R)
-    
-    Exposed= []
-    Exposed.append(E)
-    
-    for idx in range(T):
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N)
-        Exposed.append(Exposed[idx] + r*B*Suspectors[idx]*Infectors[idx]/N-a*Exposed[idx])
-        Infectors.append(Infectors[idx] + a*Exposed[idx] - y*Infectors[idx])
-        Recovers.append(Recovers[idx] + y*Infectors[idx])
-    
-    plt.cla()
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Exposed, label= u"Exposed")    
-    plt.plot(Infectors, label= u"Infectors")
-    plt.plot(Recovers, label= u"Recovers")
-    
-    plt.pause(0.1)
-    plt.legend()
-
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-# y 康复概率
-# a 潜伏者转化为感染者概率
-#导入潜伏期人群（潜伏期具有传染性）
-def SEIR_wuhan_model(N= 10000, I= 1, r= 20, B= 0.03, r2= 20, B2= 0.03, y= 0.1, a= 0.1):
-
-    #易感者
-    S= N - I
-    
-    #复原者
-    R= 0
-    
-    #潜伏者
-    E= 0
-    
-    T = 200
-    
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    Recovers= []
-    Recovers.append(R)
-    
-    Exposed= []
-    Exposed.append(E)
-    
-    for idx in range(T):
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N - r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Exposed.append(Exposed[idx] + r*B*Suspectors[idx]*Infectors[idx]/N - a*Exposed[idx] + r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Infectors.append(Infectors[idx] + a*Exposed[idx] - y*Infectors[idx])
-        Recovers.append(Recovers[idx] + y*Infectors[idx])
-    
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Exposed, label= u"Exposed")    
-    plt.plot(Infectors, label= u"Infectors")
-    plt.plot(Recovers, label= u"Recovers")
-
-    plt.legend()
-    plt.show()
-
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-# y 康复概率
-# a 潜伏者转化为感染者概率
-#导入潜伏期人群（潜伏期具有传染性）
-def SEIR_wuhan_blocked_model(N=10000, I= 1, r= 20, 
-                             B= 0.03, r2= 20, 
-                             B2= 0.03, y= 0.85, 
-                             a= 0.1, bolckday= 25):
-
-    #易感者
-    S= N - I
-    
-    #复原者
-    R= 0
-    
-    #潜伏者
-    E= 0
-    
-    T = 200
-    
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    Recovers= []
-    Recovers.append(R)
-    
-    Exposed= []
-    Exposed.append(E)
-    
-    for idx in range(T):
-        if idx> bolckday:
-            r= 5
-            r2= 5
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
             
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N - r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Exposed.append(Exposed[idx] + r*B*Suspectors[idx]*Infectors[idx]/N - a*Exposed[idx] + r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Infectors.append(Infectors[idx] + a*Exposed[idx] - y*Infectors[idx])
-        Recovers.append(Recovers[idx] + y*Infectors[idx])
-    
-    plt.cla()
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Exposed, label= u"Exposed")    
-    plt.plot(Infectors, label= u"Infectors")
-    plt.plot(Recovers, label= u"Recovers")
-    
-    plt.pause(0.1)
-    plt.legend()
-    
-    #print(Infectors)
-    return max(Infectors), Infectors.index(max(Infectors))
+    def getIntervalValue(self):
+        return self.interval
 
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-# y 康复概率
-# a 潜伏者转化为感染者概率
-# d 感染者死亡率
-# p 人口流入率    
-# blockday 隔离介入的时间    
-#导入潜伏期人群（潜伏期具有传染性）
-def SEIR_wuhan_modified_model(N=10000, I= 1, 
-                              r= 20, B= 0.03, 
-                              r2= 20, B2= 0.03, 
-                              y= 0.85, a= 0.1, 
-                              d= 0.035, population= 10,
-                              bolckday= 20):
+    def getMaxInfectors(self):
+        return max(self.infectors), self.infectors.index(max(self.infectors))
+ 
 
-    #易感者
-    S= N - I
-    
-    #复原者
-    R= 0
-    
-    #潜伏者
-    E= 0
-    
-    T = 200
-    
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    Recovers= []
-    Recovers.append(R)
-    
-    Exposed= []
-    Exposed.append(E)
-    
-    for idx in range(T):
-        if idx> bolckday:
-            r= 5
-            r2= 5
+# population 人口总数
+# infectors_num 感染者人数
+# contactors_num 感染者接触易感者的人数
+# infect_prob 传染概率
+class SI(infection_model):
+    def __init__(self, 
+                 population= 10000,
+                 infectors_num= 1,
+                 contactors_num= 10,
+                 infect_prob= 0.05):
         
-        p = 1.0 + random.randint(-1*population, population)/10000.0
-        #print(p)
-        N = N*p
-                
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N - r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Exposed.append(Exposed[idx] + r*B*Suspectors[idx]*Infectors[idx]/N - a*Exposed[idx] + r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Infectors.append(Infectors[idx] + a*Exposed[idx] - y*Infectors[idx] - d*Infectors[idx])
-        Recovers.append(Recovers[idx] + y*Infectors[idx])
-    
-    plt.cla()
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Exposed, label= u"Exposed")    
-    plt.plot(Infectors, label= u"Infectors")
-    plt.plot(Recovers, label= u"Recovers")
-    
-    plt.pause(0.1)
-    plt.legend()
-    
-    return max(Infectors), Infectors.index(max(Infectors))
-
-# N 人口总数
-# I 感染者
-# r 感染者接触易感者的人数
-# B 传染概率
-# y 康复概率
-# a 潜伏者转化为感染者概率
-# d 感染者死亡率
-# p 人口流入率    
-# blockday 隔离介入的时间    
-#导入潜伏期人群（潜伏期具有传染性）
-def SEIR_wuhan_model(N=10000, I= 1, 
-                     r= 20, B= 0.03, 
-                     r2= 20, B2= 0.03, 
-                     y= 0.85, a= 0.1, 
-                     d= 0.028, population= 10,
-                     bolckday= 20):
-
-    #易感者
-    S= N - I
-    
-    #复原者
-    R= 0
-    
-    #潜伏者
-    E= 0
-    
-    T = 200
-    
-    Infectors= []
-    Infectors.append(I)
-    
-    Suspectors= [] 
-    Suspectors.append(S)
-    
-    Recovers= []
-    Recovers.append(R)
-    
-    Exposed= []
-    Exposed.append(E)
-    
-    for idx in range(T):
-        if idx> bolckday:
-            r= 5
-            r2= 5
+        super(SI, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.contactors_num = contactors_num
+        self.interval = 0
         
-        p = 1.0 + random.randint(-1*population, population)/10000.0
-        N = N*p
-                
-        Suspectors.append(Suspectors[idx] - r*B*Infectors[idx]*Suspectors[idx]/N - r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Exposed.append(Exposed[idx] + r*B*Suspectors[idx]*Infectors[idx]/N - a*Exposed[idx] + r2*B2*Suspectors[idx]*Exposed[idx]/N)
-        Infectors.append(Infectors[idx] + a*Exposed[idx] - y*Infectors[idx] - d*Infectors[idx])
-        Recovers.append(Recovers[idx] + y*Infectors[idx])
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
     
-    plt.cla()
-    plt.plot(Suspectors,  label= u"Susceptibles")
-    plt.plot(Exposed, label= u"Exposed")    
-    plt.plot(Infectors, label= u"Infectors")
-    plt.plot(Recovers, label= u"Recovers")
-    
-    plt.pause(0.1)
-    plt.legend()
-    
-    return max(Infectors), Infectors.index(max(Infectors))
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
+            
+    def update(self):
+        self.suspectors.append(self.suspectors[-1] - self.contactors_num*self.infect_prob*self.infectors[-1]* self.suspectors[-1]/self.population)
+        self.infectors.append(self.infectors[-1] + self.contactors_num*self.infect_prob*self.infectors[-1]* self.suspectors[-1]/self.population)
 
+        self.interval += 1
+        
+    def getData(self):
+        return self.suspectors, self.infectors
+    
+    def plotRes(self):
+        plt.plot(self.suspectors,  label= u"Susceptibles")
+        plt.plot(self.infectors, label= u"Infectors")
+        
+        plt.legend()
+        plt.show()
+
+# population 人口总数
+# infectors_num 感染者人数
+# contactors_num 感染者接触易感者的人数
+# infect_prob 传染概率
+# recover_prob 康复概率
+# 康复者将具有抗体不再感染    
+class SIR(infection_model):
+    def __init__(self, 
+                 population= 10000,
+                 infectors_num= 1,
+                 contactors_num= 10, 
+                 infect_prob= 0.05,
+                 recover_prob= 0.1):
+        
+        super(SIR, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.recover_prob = recover_prob
+        self.contactors_num = contactors_num
+        self.interval = 0
+        
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
+    
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
+                
+        recovers= []
+        recovers.append(0)
+        self.recovers = recovers        
+            
+    def update(self):
+        self.suspectors.append(self.suspectors[-1] - self.contactors_num*self.infect_prob*self.infectors[-1]* self.suspectors[-1]/self.population)
+        self.infectors.append(self.infectors[-1] + self.contactors_num*self.infect_prob*self.infectors[-1]* self.suspectors[-1]/self.population - self.recover_prob*self.infectors[-1])
+        self.recovers.append(self.recovers[-1] + self.recover_prob*self.infectors[-1])        
+        
+        self.interval += 1
+        
+    def getData(self):
+        return self.suspectors, self.infectors, self.recovers
+    
+    def plotRes(self):
+        plt.plot(self.suspectors,  label= u"Susceptibles")
+        plt.plot(self.infectors, label= u"Infectors")
+        plt.plot(self.recovers, label= u"Recovers")
+        
+        plt.legend()
+        plt.show()
+    
+# population 人口总数
+# infectors_num 感染者人数
+# contactors_num 感染者接触易感者的人数
+# infect_prob 传染概率
+#  recover_prob 康复概率
+# 康复者将有可能再次感染
+class SIS(infection_model):
+    def __init__(self, 
+                 population= 10000, 
+                 infectors_num= 1,
+                 contactors_num= 10, 
+                 infect_prob= 0.05,
+                 recover_prob= 0.02):
+        
+        super(SIS, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.recover_prob = recover_prob
+        self.contactors_num = contactors_num
+        self.interval = 0
+        
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
+    
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
+            
+    def update(self):
+        self.suspectors.append(self.suspectors[-1] - self.contactors_num*self.infect_prob*self.infectors[-1]*self.suspectors[-1]/self.population + self.recover_prob*self.infectors[-1])
+        self.infectors.append(self.infectors[-1] + self.contactors_num*self.infect_prob*self.infectors[-1]*self.suspectors[-1]/self.population - self.recover_prob*self.infectors[-1])
+        
+        self.interval += 1
+        
+    def getData(self):
+        return self.suspectors, self.infectors, self.recovers
+    
+    def plotRes(self):
+        plt.plot(self.suspectors,  label= u"Susceptibles")
+        plt.plot(self.infectors, label= u"Infectors")
+        
+        plt.legend()
+        plt.show()        
+        
+# population 人口总数
+# infectors_num 感染者人数
+# contactors_num 感染者接触易感者的人数
+# infect_prob 传染概率
+# recover_prob 康复概率
+# alpha_prob 潜伏者转化为感染者概率
+#导入潜伏期人群(潜伏期不具有传染性)
+class SEIR(infection_model):
+    def __init__(self, 
+                 population= 10000, 
+                 infectors_num= 1, 
+                 contactors_num= 10, 
+                 infect_prob= 0.05, 
+                 recover_prob= 0.1, 
+                 alpha_prob= 0.9):
+        
+        super(SEIR, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.recover_prob = recover_prob
+        self.contactors_num = contactors_num
+        self.alpha_prob = alpha_prob
+        self.interval = 0
+        
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
+    
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
+    
+        recovers= []
+        recovers.append(0)
+        self.recovers = recovers     
+        
+        exposed= []
+        exposed.append(0)
+        self.exposed= exposed
+            
+    def update(self):
+        self.suspectors.append(self.suspectors[-1] - self.contactors_num*self.infect_prob*self.infectors[-1]*self.suspectors[-1]/self.population)
+        self.exposed.append(self.exposed[-1] + self.contactors_num*self.infect_prob*self.suspectors[-1]*self.infectors[-1]/self.population-self.alpha_prob*self.exposed[-1])
+        self.infectors.append(self.infectors[-1] + self.alpha_prob*self.exposed[-1] - self.recover_prob*self.infectors[-1])
+        self.recovers.append(self.recovers[-1] + self.recover_prob*self.infectors[-1])
+        
+        self.interval += 1
+        
+    def getData(self):
+        return self.suspectors, self.infectors, self.recovers, self.exposed
+    
+    def plotRes(self):
+        plt.plot(self.suspectors,  label= u"Susceptibles")
+        plt.plot(self.infectors, label= u"Infectors")
+        plt.plot(self.recovers, label= u"Recovers")
+        plt.plot(self.exposed, label= u"Exposed")
+        
+        plt.legend()
+        plt.show()        
+
+# population 人口总数
+# infectors_num 感染者人数
+# contactors_num 感染者接触易感者的人数        
+# infect_prob 传染概率
+# recover_prob 康复概率
+# e_contactors_num 潜伏者者接触易感者的人数
+# e_infect_prob 潜伏者传染概率        
+# alpha_prob 潜伏者转化为感染者概率
+#导入潜伏期人群（潜伏期具有传染性）
+class SEIR_Wuhan(infection_model):
+    def __init__(self,
+                 population= 10000, 
+                 infectors_num= 1, 
+                 contactors_num= 10, 
+                 infect_prob= 0.05,
+                 recover_prob= 0.1,
+                 e_contactors_num= 10, 
+                 e_infect_prob= 0.03,                 
+                 alpha_prob= 0.1):
+        
+        super(SEIR_Wuhan, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.recover_prob = recover_prob
+        self.contactors_num = contactors_num
+        self.e_contactors_num = e_contactors_num
+        self.e_infect_prob = e_infect_prob
+        self.alpha_prob = alpha_prob
+        self.interval = 0
+        
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
+    
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
+    
+        recovers= []
+        recovers.append(0)
+        self.recovers = recovers     
+        
+        exposed= []
+        exposed.append(0)
+        self.exposed= exposed
+            
+    def update(self):
+        self.suspectors.append(self.suspectors[-1] - self.contactors_num*self.infect_prob*self.infectors[-1]*self.suspectors[-1]/self.population - self.e_contactors_num*self.e_infect_prob*self.suspectors[-1]*self.exposed[-1]/self.population)
+        self.exposed.append(self.exposed[-1] + self.contactors_num*self.infect_prob*self.suspectors[-1]*self.infectors[-1]/self.population - self.alpha_prob*self.exposed[-1] + self.e_contactors_num*self.e_infect_prob*self.suspectors[-1]*self.exposed[-1]/self.population)
+        self.infectors.append(self.infectors[-1] + self.alpha_prob*self.exposed[-1] - self.recover_prob*self.infectors[-1])
+        self.recovers.append(self.recovers[-1] + self.recover_prob*self.infectors[-1])
+  
+        self.interval += 1
+        
+    def getData(self):
+        return self.suspectors, self.infectors, self.recovers, self.exposed
+    
+    def plotRes(self):
+        plt.plot(self.suspectors,  label= u"Susceptibles")
+        plt.plot(self.infectors, label= u"Infectors")
+        plt.plot(self.recovers, label= u"Recovers")
+        plt.plot(self.exposed, label= u"Exposed")
+        
+        plt.legend()
+        plt.show()        
+
+# population 人口总数
+# infectors_num 感染者人数
+# contactors_num 感染者接触易感者的人数        
+# infect_prob 传染概率
+# recover_prob 康复概率
+# e_contactors_num 潜伏者者接触易感者的人数
+# e_infect_prob 潜伏者传染概率        
+# alpha_prob 潜伏者转化为感染者概率
+# blockday 隔离介入的时间        
+#导入隔离介入（潜伏期具有传染性）
+class SEIR_Wuhan_Blocked(infection_model):
+    def __init__(self,
+                 population= 10000, 
+                 infectors_num= 1, 
+                 contactors_num= 10, 
+                 infect_prob= 0.05,
+                 recover_prob= 0.1,
+                 e_contactors_num= 10, 
+                 e_infect_prob= 0.03,                 
+                 alpha_prob= 0.1,
+                 blockday= 25):
+        
+        super(SEIR_Wuhan_Blocked, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.recover_prob = recover_prob
+        self.contactors_num = contactors_num
+        self.e_contactors_num = e_contactors_num
+        self.e_infect_prob = e_infect_prob
+        self.alpha_prob = alpha_prob
+        self.blockday = blockday
+        self.interval = 0
+        
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
+    
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
+    
+        recovers= []
+        recovers.append(0)
+        self.recovers = recovers     
+        
+        exposed= []
+        exposed.append(0)
+        self.exposed= exposed
+            
+    def update(self):
+        if self.interval> self.blockday:
+            self.contactors_num= 5
+            self.e_contactors_num= 5
+            
+        self.suspectors.append(self.suspectors[-1] - self.contactors_num*self.infect_prob*self.infectors[-1]*self.suspectors[-1]/self.population - self.e_contactors_num*self.e_infect_prob*self.suspectors[-1]*self.exposed[-1]/self.population)
+        self.exposed.append(self.exposed[-1] + self.contactors_num*self.infect_prob*self.suspectors[-1]*self.infectors[-1]/self.population - self.alpha_prob*self.exposed[-1] + self.e_contactors_num*self.e_infect_prob*self.suspectors[-1]*self.exposed[-1]/self.population)
+        self.infectors.append(self.infectors[-1] + self.alpha_prob*self.exposed[-1] - self.recover_prob*self.infectors[-1])
+        self.recovers.append(self.recovers[-1] + self.recover_prob*self.infectors[-1])
+  
+        self.interval += 1
+        
+    def getData(self):
+        return self.suspectors, self.infectors, self.recovers, self.exposed
+    
+    def plotRes(self):
+        plt.plot(self.suspectors,  label= u"Susceptibles")
+        plt.plot(self.infectors, label= u"Infectors")
+        plt.plot(self.recovers, label= u"Recovers")
+        plt.plot(self.exposed, label= u"Exposed")
+        
+        plt.legend()
+        plt.show()                
+
+# population 人口总数
+# infectors_num 感染者人数
+# contactors_num 感染者接触易感者的人数        
+# infect_prob 传染概率
+# recover_prob 康复概率
+# e_contactors_num 潜伏者者接触易感者的人数
+# e_infect_prob 潜伏者传染概率        
+# alpha_prob 潜伏者转化为感染者概率
+# blockday 隔离介入的时间       
+# death_prob 感染者死亡率        
+# p 人口流入率         
+#导入人口变化&感染者死亡因素（潜伏期具有传染性）
+class SEIR_wuhan_Modified(infection_model):
+    def __init__(self,
+                 population= 10000, 
+                 infectors_num= 1, 
+                 contactors_num= 10, 
+                 infect_prob= 0.05,
+                 recover_prob= 0.1,
+                 e_contactors_num= 10, 
+                 e_infect_prob= 0.03,                 
+                 alpha_prob= 0.1,
+                 death_prob= 0.035,
+                 p_ratio= 10,
+                 blockday= 25):
+        
+        super(SEIR_wuhan_Modified, self).__init__()
+        self.population = population
+        self.contactors_num = contactors_num
+        self.infect_prob = infect_prob
+        self.recover_prob = recover_prob
+        self.contactors_num = contactors_num
+        self.e_contactors_num = e_contactors_num
+        self.e_infect_prob = e_infect_prob
+        self.alpha_prob = alpha_prob
+        self.death_prob = death_prob
+        self.p_ratio = p_ratio
+        self.blockday = blockday
+        self.interval = 0
+        
+        infectors= []
+        infectors.append(infectors_num)
+        self.infectors = infectors
+    
+        suspectors= [] 
+        suspectors.append(population - infectors_num)
+        self.suspectors = suspectors
+    
+        recovers= []
+        recovers.append(0)
+        self.recovers = recovers     
+        
+        exposed= []
+        exposed.append(0)
+        self.exposed= exposed
+            
+    def update(self):
+        if self.interval> self.blockday:
+            self.contactors_num= 5
+            self.e_contactors_num= 5
+
+        p = 1.0 + random.randint(-1*self.p_ratio, self.p_ratio)/self.population
+        self.population = self.population*p
+       
+        self.suspectors.append(self.suspectors[-1] - self.contactors_num*self.infect_prob*self.infectors[-1]*self.suspectors[-1]/self.population - self.e_contactors_num*self.e_infect_prob*self.suspectors[-1]*self.exposed[-1]/self.population)
+        self.exposed.append(self.exposed[-1] + self.contactors_num*self.infect_prob*self.suspectors[-1]*self.infectors[-1]/self.population - self.alpha_prob*self.exposed[-1] + self.e_contactors_num*self.e_infect_prob*self.suspectors[-1]*self.exposed[-1]/self.population)
+        self.infectors.append(self.infectors[-1] + self.alpha_prob*self.exposed[-1] - self.recover_prob*self.infectors[-1])
+        self.recovers.append(self.recovers[-1] + self.recover_prob*self.infectors[-1])
+  
+        self.interval += 1
+        
+    def getData(self):
+        return self.suspectors, self.infectors, self.recovers, self.exposed
+    
+    def plotRes(self):
+        plt.plot(self.suspectors,  label= u"Susceptibles")
+        plt.plot(self.infectors, label= u"Infectors")
+        plt.plot(self.recovers, label= u"Recovers")
+        plt.plot(self.exposed, label= u"Exposed")
+        
+        plt.legend()
+        plt.show()                
+        
 if __name__ == '__main__':
-    #SI_model()
-    #SIS_model()
-    #SIR_model()
-    #SEIR_model()
-    #SEIR_wuhan_blocked_model()
-    #SEIR_wuhan_modified_model()
+   
+    '''
+    #model= SI()
+    #model= SIR()    
+    #model= SIS() 
+    #model= SEIR()
+    #model= SEIR_Wuhan()
+    #model= SEIR_Wuhan_Blocked(blockday = 10)
+    model= SEIR_wuhan_Modified(blockday = 10)
+    
+    for i in range(200):
+        model.update()
+        
+    model.plotRes()
+    print(model.getMaxInfectors())
+    '''
     
     plt.figure(figsize=(12,6))    
     plt.ion()
 
     value = []
     pos= []
-    T= 40
-    for i in range(T):
-        maxValue, maxPos = SEIR_wuhan_model(bolckday= i)
-        value.append(maxValue)
-        pos.append(maxPos)
+    period= 40
+    for i in range(period):
+        
+        plt.cla()
+        model = SEIR_Wuhan_Blocked(blockday= i)
+        
+        for day in range(200):
+            model.update()
+        
+        model.plotRes()
+        plt.pause(0.1)
+        
+        maxValue, maxPos = model.getMaxInfectors()
         print(i, maxValue, maxPos)
          
     plt.ioff()
-    plt.show()    
+    plt.show() 

@@ -38,32 +38,37 @@ def SST(y):
         sst += (item - average) * (item - average)
     return sst 
 
-x= [1,2,3,4,
-    5,6,7,8,9,
-    10,11,12,13,
-    14,15,16,17,
-    18,19,20]
+def main():
+    
+    x= [1,2,3,4,
+        5,6,7,8,9,
+        10,11,12,13,
+        14,15,16,17,
+        18,19,20]
 
-y= [27,26,393,1118,1309,3806,
-     2077,3248,4148,4812,5019,
-     4562,5173,5072,3971,5328,
-     4833,4214,3916,4008]
+    y= [27,26,393,1118,1309,3806,
+        2077,3248,4148,4812,5019,
+        4562,5173,5072,3971,5328,
+        4833,4214,3916,4008]
 
-x = np.array(x)
-y = np.array(y)    
+    x = np.array(x)
+    y = np.array(y)    
 
-p0 = [7, 0.2] # 第一次猜测的函数拟合参数
+    p0 = [1, 1] # 第一次猜测的函数拟合参数
 
-# 调用leastsq进行数据拟合
-# residuals为计算误差的函数
-# p0为拟合参数的初始值
-# args为需要拟合的实验数据
-plsq = leastsq(residuals, p0, args=(y, x))
+    # 调用leastsq进行数据拟合
+    # residuals为计算误差的函数
+    # p0为拟合参数的初始值
+    # args为需要拟合的实验数据
+    plsq = leastsq(residuals, p0, args=(y, x))
 
-print (u"拟合参数", plsq[0]) # 实验数据拟合后的参数
-print(1-SSE(plsq[0],y,x)/SST(y))
+    print (u"拟合参数", plsq[0]) # 实验数据拟合后的参数
+    print(u"R方", 1-SSE(plsq[0],y,x)/SST(y))
 
-pl.plot(x, y, label= "Data with Noise")
-pl.plot(x, func(x, plsq[0]), label= "Fitted Value")
-pl.legend()
-pl.show()
+    pl.plot(x, y, label= "Data with Noise")
+    pl.plot(x, func(x, plsq[0]), label= "Fitted Value")
+    pl.legend()
+    pl.show()
+
+if __name__ == '__main__':
+    main()
